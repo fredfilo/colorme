@@ -30,17 +30,13 @@ class ColorMe
         if ($key == "auth") {
             return $this->auth;
         } else {
-            throw new \RuntimeException("The property {$key} doesn't exist.");
+            throw new \Exception("The property {$key} doesn't exist.");
         }
     }
 
 // SETTERS =====================================================================
 
-    /**
-     * @param \ColorMe\Auth $auth
-     * @return void
-     */
-    public function setAuth(Auth $auth)
+    public function setAuth(\ColorMe\Auth $auth)
     {
         $this->auth = $auth;
     }
