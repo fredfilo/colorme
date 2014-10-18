@@ -4,6 +4,7 @@ namespace ColorMe;
 
 use ColorMe\Constants;
 use ColorMe\Exception\AuthorizationException;
+use GuzzleHttp\Client as HttpClient;
 
 /**
  * Auth

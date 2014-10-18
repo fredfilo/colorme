@@ -3,6 +3,7 @@
 namespace ColorMe;
 
 use ColorMe\Auth;
+use ColorMe\Resource\Shop;
 
 /**
  * ColorMe - Api client for the Japanese e-commerce platform
@@ -49,6 +50,12 @@ class ColorMe
     }
 
 // PUBLIC METHODS ==============================================================
+
+    public function shop($id = null)
+    {
+        return new Shop($this->auth, $id);
+    }
+
 // PROTECTED METHODS ===========================================================
 // PRIVATE METHODS =============================================================
 }
