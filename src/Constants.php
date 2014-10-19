@@ -54,6 +54,11 @@ class Constants
     const SALES_ENDPOINT = "/v1/sales";
 
     /**
+     * Endpoint for the SaleStat resources.
+     */
+    const SALES_STAT_ENDPOINT = "/v1/sales/stat";
+
+    /**
      * Endpoint for the Payment resources.
      */
     const PAYMENTS_ENDPOINT = "/v1/payments";
@@ -67,6 +72,21 @@ class Constants
      * Endpoint for the Gifts resources.
      */
     const GIFTS_ENDPOINT = "/v1/gifts";
+
+    /**
+     * Endpoint for the Stocks resources.
+     */
+    const STOCKS_ENDPOINT = "/v1/stocks";
+
+    /**
+     * Endpoint for the Delivery resources.
+     */
+    const DELIVERIES_ENDPOINT = "/v1/deliveries/date";
+
+    /**
+     * Endpoint for the DeliveryDate resources.
+     */
+    const DELIVERIES_DATE_ENDPOINT = "/v1/deliveries/date";
 
 // STATIC PROPERTIES ===========================================================
 // STATIC FUNCTIONS ============================================================

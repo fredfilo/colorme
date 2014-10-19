@@ -57,6 +57,11 @@ class Response
      */
     public $itemsKey;
 
+    /**
+     * @var int The API call duration in seconds.
+     */
+    public $duration;
+
 // GETTERS =====================================================================
 
     public function __get($key)

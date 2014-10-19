@@ -115,6 +115,16 @@ abstract class Resource
         return $allowed;
     }
 
+    public function isSingleAllowed()
+    {
+        return is_string($this->itemKey);
+    }
+
+    public function isCollectionAllowed()
+    {
+        return is_string($this->itemsKey);
+    }
+
     public function hasId()
     {
         return !is_null($this->id);
@@ -175,17 +185,34 @@ abstract class Resource
 
     protected function execute($method, array $filters = null, array $properties = null)
     {
-        if (!$this->isAllowedMethod($method)) {
-            $message = "The Http method {$method} is not allowed.";
-            $e = new RequestException($message);
+        $url = $this->getUrl();
+
+        $makeRequestException = function($msg) use ($url, $method, $filters, $properties)
+        {
+            $e = new RequestException($msg);
+            $e->url = $url;
             $e->method = $method;
             $e->filters = $filters;
             $e->properties = $properties;
-            throw $e;
+            return $e;
+        };
+
+        if (!$this->isAllowedMethod($method)) {
+            $message = "The Http method {$method} is not allowed.";
+            throw $makeRequestException($message);
+        }
+
+        if ($this->hasId()) {
+            if (!$this->isSingleAllowed()) {
+                $message = "A request by id is not allowed.";
+                throw $makeRequestException($message);
+            }
+        } elseif (!$this->isCollectionAllowed()) {
+            $message = "A request of many items is not allowed.";
+            throw $makeRequestException($message);
         }
 
         $http = new HttpClient();
-        $url = $this->getUrl();
         $request = $http->createRequest($method, $url);
 
         if (is_array($filters)) {
@@ -209,22 +236,22 @@ abstract class Resource
 
         try {
 
+            $startTime = microtime(true);
             $httpResponse = $http->send($request);
+            $duration = (microtime(true) - $startTime);
+
             $httpResponse = $httpResponse->json();
-            return $this->makeResponse($method, $httpResponse);
+            $response = $this->makeResponse($method, $httpResponse);
+            $response->duration = $duration;
+            return $response;
 
         } catch (\Exception $e) {
 
             $message = "An error occurred while parsing response: "
                      . $e->getMessage();
 
-            $e = new RequestException($message);
-            $e->method = $method;
-            $e->url = $url;
-            $e->filters = $filters;
-            $e->properties = $properties;
+            $e = $makeRequestException($message);
             $e->response = $httpResponse;
-
             throw $e;
 
         }

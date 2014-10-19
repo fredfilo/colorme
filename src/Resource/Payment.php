@@ -5,13 +5,13 @@ namespace ColorMe\Resource;
 use ColorMe\Constants;
 
 /**
- * Shop
+ * Payment
  *
  * @author Frederic Filosa <filosa@applistic.com>
  * @copyright 2014 - applistic.
  * @license http://www.opensource.org/licenses/mit-license.php MIT License
  */
-class Shop extends Resource
+class Payment extends Resource
 {
 // CONSTANTS ===================================================================
 // STATIC ======================================================================
@@ -30,12 +30,12 @@ class Shop extends Resource
     /**
      * @var string The response key containing the items information.
      */
-    protected $itemsKey = "shop";
+    protected $itemsKey = "payments";
 
     /**
      * @var string The endpoint used to access the resource from the base url.
      */
-    protected $endpoint = Constants::SHOP_ENDPOINT;
+    protected $endpoint = Constants::PAYMENTS_ENDPOINT;
 
 // GETTERS =====================================================================
 // SETTERS =====================================================================

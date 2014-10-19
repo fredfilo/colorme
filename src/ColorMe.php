@@ -4,6 +4,16 @@ namespace ColorMe;
 
 use ColorMe\Auth;
 use ColorMe\Resource\Shop;
+use ColorMe\Resource\Category;
+use ColorMe\Resource\Product;
+use ColorMe\Resource\Customer;
+use ColorMe\Resource\Sale;
+use ColorMe\Resource\SaleStat;
+use ColorMe\Resource\Stock;
+use ColorMe\Resource\Payment;
+use ColorMe\Resource\Delivery;
+use ColorMe\Resource\DeliveryDate;
+use ColorMe\Resource\Gift;
 
 /**
  * ColorMe - Api client for the Japanese e-commerce platform
@@ -54,6 +64,56 @@ class ColorMe
     public function shop($id = null)
     {
         return new Shop($this->auth, $id);
+    }
+
+    public function categories($id = null)
+    {
+        return new Category($this->auth, $id);
+    }
+
+    public function products($id = null)
+    {
+        return new Product($this->auth, $id);
+    }
+
+    public function customers($id = null)
+    {
+        return new Customer($this->auth, $id);
+    }
+
+    public function sales($id = null)
+    {
+        return new Sale($this->auth, $id);
+    }
+
+    public function salesStat($id = null)
+    {
+        return new SaleStat($this->auth, $id);
+    }
+
+    public function payments($id = null)
+    {
+        return new Payment($this->auth, $id);
+    }
+
+    public function deliveries($id = null)
+    {
+        return new Delivery($this->auth, $id);
+    }
+
+    public function deliveriesDate($id = null)
+    {
+        return new DeliveryDate($this->auth, $id);
+    }
+
+    public function stocks($id = null)
+    {
+        return new Stock($this->auth, $id);
+    }
+
+    public function gifts($id = null)
+    {
+        return new Gift($this->auth, $id);
     }
 
 // PROTECTED METHODS ===========================================================
