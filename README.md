@@ -1,11 +1,12 @@
 ColorMe: API client for カラーミー
 =================================
 
-カラーミー is a Japanese eCommerce platform. An API is provided to access products,
-categories, sales, deliveries, etc.
+カラーミー (Color Me) is a Japanese eCommerce platform.
+An API is provided to access products, categories, sales, deliveries, etc.
 
 Homepage: https://shop-pro.jp
-Developer: https://api,shop-pro.jp/developers/sign_in
+
+Developer: https://api.shop-pro.jp/developers/sign_in
 
 
 
@@ -13,6 +14,21 @@ Installation
 ------------
 
 ColorMe API client is installed through [Composer](https://getcomposer.org/).
+
+The package is not submitted to Packagist yet. Please include the repository url
+in composer.json:
+
+```json
+"require": {
+    "fredfilo/colorme": "dev-master"
+},
+"repositories": [
+    {
+        "type": "vcs",
+        "url": "https://github.com/fredfilo/colorme"
+    }
+]
+```
 
 
 
