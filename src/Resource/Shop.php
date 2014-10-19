@@ -4,6 +4,7 @@ namespace ColorMe\Resource;
 
 use ColorMe\Constants;
 use ColorMe\Resource\Resource;
+use ColorMe\Response\Response;
 use ColorMe\Exception\RequestException;
 
 /**
@@ -18,41 +19,31 @@ class Shop extends Resource
 // CONSTANTS ===================================================================
 // STATIC ======================================================================
 // PROPERTIES ==================================================================
+
+    /**
+     * @var array Array of allowed methods. Subclasses must set this.
+     */
+    protected $allowedMethods = array("GET");
+
+    /**
+     * @var string The response key containing the single item information.
+     */
+    protected $itemKey = "shop";
+
+    /**
+     * @var string The response key containing the items information.
+     */
+    protected $itemsKey = "shop";
+
+    /**
+     * @var string The endpoint used to access the resource from the base url.
+     */
+    protected $endpoint = Constants::SHOP_ENDPOINT;
+
 // GETTERS =====================================================================
 // SETTERS =====================================================================
 // CONSTRUCTOR =================================================================
 // PUBLIC ======================================================================
-
-    /**
-     * Returns the raw URL that may contain placeholders.
-     *
-     * @return string The raw URL.
-     */
-    public function getRawUrl($method)
-    {
-        $url = null;
-        if ($method == "GET") {
-            $url = Constants::URL_SHOP;
-        }
-        return $url;
-    }
-
 // PROTECTED ===================================================================
-
-    /**
-     * Parses the API response.
-     *
-     * @return mixed
-     */
-    protected function parseResponse($method, $response)
-    {
-        if (is_array($response) && array_key_exists("shop", $response)) {
-            return $response["shop"];
-        } else {
-            $message = "Invalid Shop response. The API may have changed.";
-            throw new RequestException($message);
-        }
-    }
-
 // PRIVATE =====================================================================
 }

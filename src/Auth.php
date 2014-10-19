@@ -75,7 +75,9 @@ class Auth
             "redirect_uri=" . urlencode($this->redirectUri),
         );
 
-        return Constants::URL_AUTHORIZE . "?" . implode("&", $parameters);
+        return Constants::API_URL
+               . Constants::AUTHORIZE_ENDPOINT
+               . "?" . implode("&", $parameters);
     }
 
     /**
@@ -111,7 +113,8 @@ class Auth
         $this->accessToken = null;
 
         $http = new HttpClient();
-        $request = $http->createRequest("POST", Constants::URL_ACCESS_TOKEN);
+        $url = Constants::API_URL . Constants::ACCESS_TOKEN_ENDPOINT;
+        $request = $http->createRequest("POST", $url);
         $body = $request->getBody();
         $body->setField("client_id", $this->clientId);
         $body->setField("client_secret", $this->clientSecret);

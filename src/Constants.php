@@ -19,59 +19,54 @@ class Constants
     // URLs --------------------------------------------------------------------
 
     /**
+     * Base API url.
+     */
+    const API_URL = "https://api.shop-pro.jp";
+
+    /**
      * Endpoint used for user authorization.
      */
-    const URL_AUTHORIZE = "https://api.shop-pro.jp/oauth/authorize";
+    const AUTHORIZE_ENDPOINT = "/oauth/authorize";
 
     /**
      * Endpoint used to exchange an authorization code for an access token.
      */
-    const URL_ACCESS_TOKEN = "https://api.shop-pro.jp/oauth/token";
+    const ACCESS_TOKEN_ENDPOINT = "/oauth/token";
 
     /**
      * Endpoint for the Shop resource.
      */
-    const URL_SHOP = "https://api.shop-pro.jp/v1/shop.json";
+    const SHOP_ENDPOINT = "/v1/shop";
 
     /**
      * Endpoint for the Category resources.
      */
-    const URL_CATEGORIES = "https://api.shop-pro.jp/v1/categories.json";
+    const CATEGORIES_ENDPOINT = "/v1/categories";
 
     /**
      * Endpoint for the Product resources.
      */
-    const URL_PRODUCTS = "https://api.shop-pro.jp/v1/products.json";
-
-    /**
-     * Endpoint for a single Product resource.
-     */
-    const URL_PRODUCT_SINGLE = "https://api.shop-pro.jp/v1/products/%d.json";
+    const PRODUCTS_ENDPOINT = "/v1/products";
 
     /**
      * Endpoint for the Sale resources.
      */
-    const URL_SALES = "https://api.shop-pro.jp/v1/sales.json";
-
-    /**
-     * Endpoint for a single Sale resource.
-     */
-    const URL_SALE_SINGLE = "https://api.shop-pro.jp/v1/sales/%d.json";
+    const SALES_ENDPOINT = "/v1/sales";
 
     /**
      * Endpoint for the Payment resources.
      */
-    const URL_PAYMENTS = "https://api.shop-pro.jp/v1/payments.json";
+    const PAYMENTS_ENDPOINT = "/v1/payments";
 
     /**
      * Endpoint for the Customer resources.
      */
-    const URL_CUSTOMERS = "https://api.shop-pro.jp/v1/customers.json";
+    const CUSTOMERS_ENDPOINT = "/v1/customers";
 
     /**
-     * Endpoint for a single Customer resource.
+     * Endpoint for the Gifts resources.
      */
-    const URL_CUSTOMER_SINGLE = "https://api.shop-pro.jp/v1/customers/%d.json";
+    const GIFTS_ENDPOINT = "/v1/gifts";
 
 // STATIC PROPERTIES ===========================================================
 // STATIC FUNCTIONS ============================================================

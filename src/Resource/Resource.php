@@ -3,6 +3,8 @@
 namespace ColorMe\Resource;
 
 use ColorMe\Auth;
+use ColorMe\Constants;
+use ColorMe\Response\Response;
 use ColorMe\Exception\RequestException;
 use GuzzleHttp\Client as HttpClient;
 
@@ -17,23 +19,13 @@ abstract class Resource
 {
 // CONSTANTS ===================================================================
 // ABSTRACT ====================================================================
-
-    /**
-     * Returns the raw URL that may contain placeholders.
-     *
-     * @return string The raw URL.
-     */
-    public abstract function getRawUrl($method);
-
-    /**
-     * Parses the API response.
-     *
-     * @return mixed
-     */
-    protected abstract function parseResponse($method, $response);
-
 // STATIC ======================================================================
 // PROPERTIES ==================================================================
+
+    /**
+     * @var int|string The resource id.
+     */
+    public $id;
 
     /**
      * @var \ColorMe\Auth
@@ -41,9 +33,24 @@ abstract class Resource
     protected $auth;
 
     /**
-     * @var int|string The resource id.
+     * @var array Array of allowed methods. Subclasses must set this.
      */
-    public $id;
+    protected $allowedMethods = array();
+
+    /**
+     * @var string The response key containing the single item information.
+     */
+    protected $itemKey;
+
+    /**
+     * @var string The response key containing the items information.
+     */
+    protected $itemsKey;
+
+    /**
+     * @var string The endpoint used to access the resource from the base url.
+     */
+    protected $endpoint;
 
 // GETTERS =====================================================================
 
@@ -68,15 +75,65 @@ abstract class Resource
         return $this;
     }
 
+    /**
+     * @param $id int|string
+     * @return \ColorMe\Resource\Resource
+     * @throws \InvalidArgumentException If $id doesn't represent an integer.
+     */
+    public function setId($id)
+    {
+        if (!is_null($id) && !is_int($id) && (!is_string($id) || !ctype_digit($id))) {
+            $message = "The resource id must represent an integer.";
+            throw new \InvalidArgumentException($message);
+        }
+
+        $this->id = $id;
+        return $this;
+    }
+
 // CONSTRUCTOR =================================================================
 
     public function __construct(\ColorMe\Auth $auth, $id = null)
     {
-        $this->setAuth($auth);
-        $this->id = $id;
+        $this->setAuth($auth)
+             ->setId($id);
     }
 
 // PUBLIC ======================================================================
+
+    /**
+     * Returns true if the provided Http method is allowed.
+     *
+     * @return boolean
+     */
+    public function isAllowedMethod($method)
+    {
+        $allowed = false;
+        if (is_string($method)) {
+            return in_array(strtoupper($method), $this->allowedMethods);
+        }
+        return $allowed;
+    }
+
+    public function hasId()
+    {
+        return !is_null($this->id);
+    }
+
+    /**
+     * Returns the URL corresponding to the Http method.
+     *
+     * @return string The raw URL.
+     */
+    public function getUrl()
+    {
+        $url = Constants::API_URL . $this->endpoint;
+        if ($this->hasId()) {
+            $url .= "/" . $this->id;
+        }
+        $url .= ".json";
+        return $url;
+    }
 
     /**
      * @param $filters array Optional array of query string parameters.
@@ -114,43 +171,21 @@ abstract class Resource
         return $this->execute("DELETE", $filters);
     }
 
-    /**
-     * Returns the final URL filled with the resource id if necessary.
-     *
-     * @return string The final URL.
-     */
-    public function getUrl($method)
+// PROTECTED ===================================================================
+
+    protected function execute($method, array $filters = null, array $properties = null)
     {
-        $url = $this->getRawUrl($method);
-
-        if (!is_string($url)) {
-
+        if (!$this->isAllowedMethod($method)) {
             $message = "The Http method {$method} is not allowed.";
             $e = new RequestException($message);
             $e->method = $method;
-            $e->url = $url;
             $e->filters = $filters;
             $e->properties = $properties;
             throw $e;
-
         }
 
-        if (is_int($this->id) || (is_string($this->id) && ctype_digit($this->id))) {
-            $url = sprintf($url, $this->id);
-        }
-
-        return $url;
-    }
-
-// PROTECTED ===================================================================
-
-    protected function execute(
-        $method,
-        array $filters = null,
-        array $properties = null
-    ) {
         $http = new HttpClient();
-        $url = $this->getUrl($method);
+        $url = $this->getUrl();
         $request = $http->createRequest($method, $url);
 
         if (is_array($filters)) {
@@ -170,13 +205,13 @@ abstract class Resource
         $authHeader = $this->auth->getAuthorizationHeader();
         $request->setHeader("Authorization", $authHeader);
 
-        $response = null;
+        $httpResponse = null;
 
         try {
 
-            $response = $http->send($request);
-            $response = $response->json();
-            return $this->parseResponse($method, $response);
+            $httpResponse = $http->send($request);
+            $httpResponse = $httpResponse->json();
+            return $this->makeResponse($method, $httpResponse);
 
         } catch (\Exception $e) {
 
@@ -188,11 +223,59 @@ abstract class Resource
             $e->url = $url;
             $e->filters = $filters;
             $e->properties = $properties;
-            $e->response = $response;
+            $e->response = $httpResponse;
 
             throw $e;
 
         }
+    }
+
+    /**
+     * Creates a response object by paring the API response.
+     *
+     * @param $method string The Http method.
+     * @param $rawResponse mixed The Http response.
+     * @return \ColorMe\Response\Response
+     */
+    protected function makeResponse($method, $rawResponse)
+    {
+        $error = false;
+        $response = new Response();
+        $response->itemKey = $this->itemKey;
+        $response->itemsKey = $this->itemsKey;
+
+        if ($this->hasId()) {
+
+            if (!array_key_exists($this->itemKey, $rawResponse)) {
+                $error = true;
+            }
+
+            $response->id = $this->id;
+            $response->item = $rawResponse[$this->itemKey];
+
+        } else {
+
+            if (!array_key_exists($this->itemsKey, $rawResponse)) {
+                $error = true;
+            }
+
+            $response->items = $rawResponse[$this->itemsKey];
+
+            if (array_key_exists("meta", $rawResponse)) {
+                $response->total = $rawResponse["meta"]["total"];
+                $response->offset = $rawResponse["meta"]["offset"];
+                $response->limit = $rawResponse["meta"]["limit"];
+            }
+
+        }
+
+        if ($error === true) {
+            $message = "Invalid " . get_called_class() . " response. "
+                     . "The API may have changed.";
+            throw new RequestException($message);
+        }
+
+        return $response;
     }
 
 // PRIVATE =====================================================================
