@@ -20,7 +20,7 @@ in composer.json:
 
 ```json
 "require": {
-    "fredfilo/colorme": "dev-master"
+    "fredfilo/colorme": "1.*"
 },
 "repositories": [
     {
