@@ -223,10 +223,27 @@ abstract class Resource
         }
 
         if (is_array($properties)) {
-            $body = $request->getBody();
-            foreach ($properties as $key => $value) {
-                $body->setField($key, $value);
+
+            switch ($method) {
+
+                case 'POST':
+                    $body = $request->getBody();
+                    foreach ($properties as $key => $value) {
+                        $body->setField($key, $value);
+                    }
+                    break;
+
+                case 'PUT':
+                    $stream = json_encode($properties);
+                    $body = \GuzzleHttp\Stream\Stream::factory($stream);
+                    $request->setBody($body);
+                    $request->setHeader("Content-Type", "application/json");
+                    break;
+
+                default:
+                    break;
             }
+
         }
 
         $authHeader = $this->auth->getAuthorizationHeader();
@@ -247,8 +264,8 @@ abstract class Resource
 
         } catch (\Exception $e) {
 
-            $message = "An error occurred while parsing response: "
-                     . $e->getMessage();
+            $message = "An exception occurred while parsing response."
+                     . " | Exception: " . $e->getMessage();
 
             $e = $makeRequestException($message);
             $e->response = $httpResponse;
