@@ -41,6 +41,20 @@ class Product extends Resource
 // SETTERS =====================================================================
 // CONSTRUCTOR =================================================================
 // PUBLIC ======================================================================
+
+    /**
+     * @param $properties array Optional array of body content.
+     * @return array
+     */
+    public function put(array $properties = null)
+    {
+        if (!is_null($properties)) {
+            $properties = array("product" => $properties);
+        }
+
+        return parent::put($properties);
+    }
+
 // PROTECTED ===================================================================
 // PRIVATE =====================================================================
 }

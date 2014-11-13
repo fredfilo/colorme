@@ -48,6 +48,19 @@ class Sale extends Resource
 // CONSTRUCTOR =================================================================
 // PUBLIC ======================================================================
 
+    /**
+     * @param $properties array Optional array of body content.
+     * @return array
+     */
+    public function put(array $properties = null)
+    {
+        if (!is_null($properties)) {
+            $properties = array("sale" => $properties);
+        }
+
+        return parent::put($properties);
+    }
+
     public function cancel(array $properties = null)
     {
         if (!$this->hasId()) {
